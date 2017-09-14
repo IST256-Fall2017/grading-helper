@@ -12,7 +12,7 @@ Below are the details of your grade:
 
 - What the problem attempted? Effort made to start the homework assignment (1pts).
     - Grade:
-- What the problem analysis thought out? Identified inputs and outputs, including sources and targets. Outlined a process which explains code flow in pseudo code – not python. (2pts)
+- What the problem analysis thought out? Identified inputs and outputs, including sources and targets. Outlined a process which explains code flow in pseudo code, not python. (2pts)
     - Grade:
 - Does the code written code execute? Program runs without error. (2pts)
     - Grade: 
@@ -152,12 +152,13 @@ class GradingGithub():
             path = os.path.join(os.path.expanduser('~'), self.DEFAULT_DIR)
         sub_folders = [name for name in os.listdir(path)
             if os.path.isdir(os.path.join(path, name))]
-        command = 'cd {} && git add . && git commit -a -m "{}" && git push origin {}'
+        command = 'cd {} && git add . && git commit -m "{}" && git push origin {}'
         for sub_folder in sub_folders:
             cproc = subprocess.call(command.format(sub_folder, commit_message, branch_name), shell=True, cwd=path)
             while True:
                 if cproc == 0:
                     print("Successfully pushed {}".format(sub_folder))
+                    break
                 else:
                     print("There was an error, trying to pull first")
                     cproc = subprocess.call("cd {} && git pull origin {} && git push origin {}".format(sub_folder, branch_name, branch_name),
