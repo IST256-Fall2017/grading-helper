@@ -21,6 +21,7 @@ Below are the details of your grade:
 - Is the code well written? Easy to understand, modular uses functions for code reuse and readability? Are python objects aptly named? No unnecessary code, or code not pertinent to the problem at hand? (1pt)
     - Grade:
 - Are the questions answered at the bottom of the challenge? Are the answers well thought out and correct? (3pts)
+    - Grade: 
 
 """
 
@@ -94,9 +95,13 @@ class GradingGithub():
         Adds a markdown file for grading notes
         :param path str: the path to add the file to
         """
-        with open(os.path.join(path, "GRADE.md"), "w") as file:
-            file.write(grade_md)
-        print("Added GRADE.md to {}".format(path))
+        filepath = os.path.join(path, "GRADE.md")
+        if not os.path.isfile(filepath):
+            with open(os.path.join(path, "GRADE.md"), "w") as file:
+                file.write(grade_md)
+            print("Added GRADE.md to {}".format(path))
+        else:
+            print("GRADE.md already exists")
 
     def get_repos(self, filter=None):
         """ get repos
@@ -129,16 +134,37 @@ class GradingGithub():
         if not os.path.exists(path):
             os.makedirs(path)
         
-        command = "git clone {} && cd {} && git checkout -B {}"
+        command = "git clone {}"
         for repo in repo_list:
-            folder = repo.clone_url.split("/")[-1].rstrip(".git")
-            cproc = subprocess.call(command.format(repo.clone_url, folder, branch_name), shell=True, cwd=path)
+            folder = repo.clone_url.split("/")[-1].replace(".git", "")
+            cproc = subprocess.call(command.format(repo.clone_url), shell=True, cwd=path)
             if cproc == 0:
                 print("Successfully cloned {}".format(repo.full_name))
-                self._add_grading_comments(os.path.join(path, folder))
+                if self._checkout_graded(folder, branch_name, path):
+                    self._add_grading_comments(os.path.join(path, folder))
+                else:
+                    print("ERROR CREATING GRADED BRANCH")
             else:
                 print("ERROR")
         
+    def _checkout_graded(self, folder, branch_name, path):
+        command = "git checkout {}".format(branch_name)
+        try:
+            cproc = subprocess.call(command, shell=True, cwd=os.path.join(path, folder))
+            if cproc == 0:
+                print("graded branch checked out")
+            else:
+                command = "git checkout -b {}".format(branch_name)
+                cproc = subprocess.call(command, shell=True, cwd=os.path.join(path, folder))
+                if cproc == 1:
+                    print("Successfully Created new branch")
+                else:
+                    print("ERROR: could not created graded branch")
+                    return False
+            return True
+        except Exception as e:
+            print("ERROR: " + str(e))
+            return False
 
     def commit_and_push(self, commit_message, path=None, branch_name="graded"):
         """ commit_and_push
