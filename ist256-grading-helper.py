@@ -129,7 +129,7 @@ class GradingGithub():
         if not os.path.exists(path):
             os.makedirs(path)
         
-        command = "git clone {} && cd {} && git checkout -b {}"
+        command = "git clone {} && cd {} && git checkout -B {}"
         for repo in repo_list:
             folder = repo.clone_url.split("/")[-1].rstrip(".git")
             cproc = subprocess.call(command.format(repo.clone_url, folder, branch_name), shell=True, cwd=path)
