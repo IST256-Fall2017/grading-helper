@@ -13,7 +13,7 @@ $ pip install -r requirements.txt
 To execute the script simply run
 
 ```
-$ python ist256-grading-helper.py
+$ python grade.py
 ```
 
 Follow the onscreen prompts, You must have admin priviledges to the group to view private repos! 
