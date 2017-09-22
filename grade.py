@@ -2,6 +2,7 @@ from github import Github
 from github.Requester import GithubException
 import os
 import subprocess
+import export_grade
 
 DEFAULT_GRADE_MD = """
 # Grade Details
@@ -201,7 +202,8 @@ if __name__ == "__main__":
         print("Please choose and option")
         print("1 - Clone new repos and setup for grading")
         print("2 - Push graded repos to github")
-        print("3 - Quit the program")
+        print("3 - Export Grades to csv")
+        print("4 - Quit Program")
         user_choice = input("Option: ")
         if user_choice == "1":
             print("Please enter the repo filter. This will usually be the base of the lesson url")
@@ -220,9 +222,19 @@ if __name__ == "__main__":
                 gh.commit_and_push(message, path=path)
                 print("All repos commited and pushed to github")
         if user_choice == "3":
+            path = input("Path (enter q to cancel): ")
+            if path.lower() != "q":
+                filename = input("Please enter export filename: ")
+                grader = export_grade.GradeExporter(path, filename)
+                grades = grader.get_grades()
+                for grade in grades:
+                    print("{}: {}".format(*grade))
+                print("Grade Successfully exported!")
+        if user_choice == "4":
             break
 
     print("Finished the grading script")
+    exit(0)
 
 
     
