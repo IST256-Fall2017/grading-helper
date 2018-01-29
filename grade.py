@@ -157,7 +157,7 @@ class GradingGithub():
             else:
                 command = "git checkout -b {}".format(branch_name)
                 cproc = subprocess.call(command, shell=True, cwd=os.path.join(path, folder))
-                if cproc == 1:
+                if cproc == 0:
                     print("Successfully Created new branch")
                 else:
                     print("ERROR: could not created graded branch")
